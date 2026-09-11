@@ -1,0 +1,48 @@
+spring:
+  application:
+    name: upsolve
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5433}/upsolve
+    username: ${DB_USER:upsolve}
+    password: ${DB_PASS:upsolve}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        default_schema: public
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+  session:
+    store-type: jdbc
+    jdbc:
+      initialize-schema: always
+    timeout: 24h
+  jackson:
+    default-property-inclusion: always
+    serialization:
+      write-dates-as-timestamps: false
+
+server:
+  servlet:
+    session:
+      cookie:
+        http-only: true
+        same-site: lax
+        secure: false
+        name: UPSOLVE_SESSION
+
+codeforces:
+  api:
+    base-url: ${CF_API_BASE_URL:https://codeforces.com/api}
+    rate-limit-ms: ${CF_RATE_LIMIT_MS:2500}
+    timeout-seconds: 30
+    page-size: 500
+    catalog-ttl-hours: 24
+
+upsolve:
+  sync:
+    max-retries: 3
+    lease-duration-minutes: 15

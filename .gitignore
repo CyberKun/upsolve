@@ -1,0 +1,35 @@
+# Java / Maven
+backend/target/
+backend/.mvn/wrapper/maven-*/
+*.tsbuildinfo
+*.class
+*.jar
+*.war
+!backend/.mvn/wrapper/maven-wrapper.jar
+
+# Node
+frontend/node_modules/
+frontend/dist/
+frontend/.cache/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+
+# Environment
+.env
+!.env.example
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test results
+frontend/test-results/
+frontend/playwright-report/
+
+# Logs
+*.log
