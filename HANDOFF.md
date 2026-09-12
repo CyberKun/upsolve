@@ -1,5 +1,15 @@
 # Task handoff
 
+## Current status — continuation on 12 September 2026
+
+The previous implementation was already committed at `2597c3b` on `main`, tracking `origin/main` at the private repository `https://github.com/CyberKun/upsolve`. This continuation began by reading this handoff and confirming `git status` was clean and `git diff` empty; completed feature work was retained.
+
+The browser locator is fixed. The duplicate session-store errors were reproduced even though browser assertions passed, then resolved with explicit authentication-strategy handling and a non-persistent security-context repository. The JDBC-backed `userId` session remains authoritative and login still rotates its ID. A new test checks 24 concurrent reads, stable cookies, and invalidation of the old cookie after login. Browser tests now fail on HTTP 5xx responses or backend ERROR logs.
+
+The deployed route check also found that completed accounts could reopen setup. `ProtectedRoute` now redirects them to Today; browser regression checks cover normal and demo accounts. See `docs/feature-audit.md` for the feature inventory, coverage and limitations. API documentation and README testing instructions have been corrected.
+
+The final backend/frontend images are running at `http://localhost`. Deployed desktop routes, queue details, setup redirect and loaded mobile queue passed Chromium smoke checks with no browser/server errors. The existing database was preserved. No known functional blocker remains within the tested scope; broader validation and intentional product limits are recorded in the feature audit.
+
 ## Original task/goal
 
 Go through the Upsolve project, identify all features, make sure everything works and is in place, and verify the application end to end.
@@ -8,7 +18,7 @@ Go through the Upsolve project, identify all features, make sure everything work
 
 - Mapped the product areas: authentication, onboarding, Codeforces handle validation and sync, problem catalog/search, queue management, notes, spaced reviews, Today view, analytics/Insights, settings, export, responsive navigation, and read-only demo mode.
 - Fixed SPA CSRF handling so the frontend obtains the cookie token and sends the raw token in `X-XSRF-TOKEN` headers.
-- Added session ID rotation at login and removed the one-session limit that caused session persistence conflicts during browser testing.
+- Added session ID rotation at login. Removing the one-session limit alone did not resolve persistence conflicts; the continuation fix above does.
 - Scoped submission counts/history and review operations to the authenticated user.
 - Replaced mocked review-controller user IDs with the authenticated session user.
 - Implemented review schedule lookup, due/overdue/today/upcoming grouping, timezone-aware dates, configurable intervals, outcome progression, snooze behavior, ownership checks, and idempotent review recording with row locking.
@@ -36,6 +46,8 @@ Go through the Upsolve project, identify all features, make sure everything work
 - Browser E2E uses a disposable PostgreSQL container and a local deterministic Codeforces stub; it does not touch the developer’s running Compose database.
 
 ## Files modified
+
+The lists below record the earlier implementation already in `2597c3b`. Files changed during this continuation are `HANDOFF.md`, `README.md`, `docs/api-contract.md`, the new `docs/feature-audit.md`, `backend/src/main/java/dev/upsolve/auth/SecurityConfig.java`, `backend/src/test/java/dev/upsolve/FeatureIntegrationTest.java`, `frontend/src/features/auth/ProtectedRoute.tsx`, `frontend/e2e/features.spec.ts`, and `frontend/e2e/run.mjs`. Continuation changes are not committed or pushed.
 
 Backend:
 
@@ -124,29 +136,31 @@ Project/configuration:
 
 ## Current errors or blockers
 
-- The backend and unit/integration checks pass, but the full browser E2E suite currently has one test failure in the test itself: the locator for the revealed note text matches both the read-only review note and the underlying NotesEditor textarea. The failure is a Playwright strict-mode ambiguity, not an application assertion failure. Use a scoped locator such as `page.locator('section').getByText('Use a prefix sum and check overflow.', { exact: true })` or assert the review-session container.
-- Earlier browser runs also logged duplicate `SPRING_SECURITY_CONTEXT` session-attribute inserts while rapidly switching sessions. The backend integration suite passes after removing `maximumSessions(1)`, but rerun browser E2E after the locator fix to confirm the session-store warning no longer affects the flow.
+- The original browser locator failure and duplicate `SPRING_SECURITY_CONTEXT` inserts are resolved. An intermediate security configuration failed at startup because explicit `IF_REQUIRED` conflicts with explicit authentication-strategy handling; removing the redundant policy fixed it. Subsequent backend and browser checks passed.
 - `docker compose` is already running in the workspace (`upsolver-db-1`, `upsolver-backend-1`, `upsolver-frontend-1`). Do not reset or truncate that database; the integration/E2E harness uses disposable databases.
 - `npm audit` is clean after upgrading Vitest to `4.1.11`. The production bundle still emits a non-failing chunk-size warning for the main chunk.
 
 ## Tests/builds already run
 
-- Backend `cd backend; .\mvnw.cmd verify -B -ntp`: passed. `FeatureIntegrationTest` reports 9 tests, 0 failures, 0 errors. It covers auth/CSRF/logout, setup validation, queue CRUD/version conflicts/archive, notes conflicts, review scheduling/idempotency/export, user scoping, analytics/search/submission isolation, and 501-submission sync pagination/repeatability.
+- Backend `cd backend; .\mvnw.cmd verify -B -ntp`: passed on the final backend source. `FeatureIntegrationTest` reports 10 tests, 0 failures, 0 errors. It covers auth/CSRF/logout, concurrent authentication/session rotation, setup validation, queue CRUD/version conflicts/archive, notes conflicts, review scheduling/idempotency/export, user scoping, analytics/search/submission isolation, and 501-submission sync pagination/repeatability.
 - Frontend `npm run build`: passed. Vite emitted only the existing non-failing chunk-size warning; after lazy-loading Insights the generated Insights chunk is split out.
 - Frontend `npm test`: passed. 1 test file, 7 tests passed.
 - Frontend `npm run lint`: run after adding ESLint 9 flat config; no lint errors were emitted in the completed run.
 - Frontend `npm run type-check`: passed in the completed run.
 - Frontend `npm audit`: passed with 0 vulnerabilities.
 - Direct live Codeforces checks for `user.info?handles=tourist` and `user.status?handle=tourist&from=1&count=1`: both returned HTTP 200 and `status: OK`.
-- Frontend browser E2E: mobile/demo test passed; the main workflow reached the review note assertion and failed only because of the strict-mode duplicate locator described above.
+- Frontend `npm run test:e2e`: both Chromium tests passed, including the new completed-account setup redirects. No HTTP 5xx assertion failures or backend ERROR logs. The runner cleaned up its disposable database and backend.
+- Mobile E2E rerun after waiting for loaded queue cards before checking overflow: 1 passed, no backend ERROR logs.
+- Docker Compose builds and deployed browser smoke checks: passed. Backend/frontend were recreated without restarting, truncating or reseeding the existing database. Desktop Insights and loaded mobile queue screenshots were visually inspected. Build logs and browser artifacts are ignored by Git.
+
+## What remains unfinished
+
+No required implementation or verification step from this audit remains. Continuation changes are uncommitted and unpushed. Optional future work includes broader browser/accessibility/load coverage, large live imports, and the documented product limitations; none should be described as already verified.
 
 ## Exact next steps for the next Codex session
 
-1. Fix the single E2E locator in `frontend/e2e/features.spec.ts` by scoping it to the review-session note panel.
-2. Run `cd frontend; npm run test:e2e` again. Inspect `frontend/e2e-test.log` and `frontend/e2e-backend.log`; require both browser tests to pass and confirm there are no session-store SQL errors.
-3. Run `cd frontend; npm run build; npm test; npm run lint; npm run type-check; npm audit` after the E2E-only test edit.
-4. Run `cd backend; .\mvnw.cmd verify -B -ntp` once more after any backend change; otherwise retain the existing 9-test pass as the backend verification.
-5. Build and restart the local Compose images only if needed for manual smoke testing. Preserve the existing Compose database and use `docker compose build backend frontend` followed by `docker compose up -d`.
-6. Manually smoke-test `/login`, `/register`, `/setup`, `/today`, `/queue`, `/queue/:id`, `/reviews`, `/insights`, and `/settings` using the running app at `http://localhost` after E2E is green.
-7. Review the final diff for accidental generated artifacts (`frontend/dist`, `frontend/tsconfig.tsbuildinfo`, test reports, logs) before handing the project back.
-
+1. Read this current status and `docs/feature-audit.md`, then inspect `git status` and `git diff`. Preserve the uncommitted continuation fixes; do not repeat the completed audit.
+2. If asked to commit/push, review the nine continuation files listed above, run `git diff --check`, then commit and push to the existing `origin/main`. No new repository is needed.
+3. If changing backend behavior, run `cd backend; .\mvnw.cmd verify -B -ntp`, then run `cd ../frontend; npm run test:e2e` against the newly packaged JAR. Frontend-only changes require relevant build/lint/browser checks.
+4. Treat cross-browser coverage, load testing, dependency major-version upgrades and large live Codeforces imports as additional work, not unresolved failures from this audit. Product limitations are documented in README and the feature audit.
+5. Preserve `upsolver-db-1` and its volume. Tests use disposable databases; never truncate or reseed the existing database to rerun verification.

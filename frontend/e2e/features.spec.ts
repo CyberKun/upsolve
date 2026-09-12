@@ -1,4 +1,15 @@
-import { test, expect } from '@playwright/test';
+import { test as base, expect } from '@playwright/test';
+
+const test = base.extend<{ serverErrors: void }>({
+  serverErrors: [async ({ page }, use) => {
+    const errors: string[] = [];
+    page.on('response', response => {
+      if (response.status() >= 500) errors.push(`${response.status()} ${response.url()}`);
+    });
+    await use();
+    expect(errors).toEqual([]);
+  }, { auto: true }],
+});
 
 test('new account completes setup, sync, queue, notes, reviews, analytics, export and logout', async ({ page }) => {
   const errors: string[] = [];
@@ -17,6 +28,8 @@ test('new account completes setup, sync, queue, notes, reviews, analytics, expor
   await page.getByPlaceholder('Codeforces handle', { exact: true }).fill(username);
   await page.getByRole('button', { name: 'Start tracking' }).click();
   await expect(page).toHaveURL(/\/today$/);
+  await page.goto('/setup');
+  await expect(page).toHaveURL(/\/today$/);
   await page.getByRole('link', { name: 'Upsolve Queue', exact: true }).click();
   await page.getByRole('link', { name: /Audit Practice/ }).first().click();
   await page.getByLabel('Priority', { exact: true }).selectOption('HIGH');
@@ -30,7 +43,7 @@ test('new account completes setup, sync, queue, notes, reviews, analytics, expor
   await page.getByRole('button', { name: 'Enable reviews', exact: true }).click();
   await page.getByRole('button', { name: 'Start review', exact: true }).click();
   await page.getByRole('button', { name: 'Reveal my notes' }).click();
-  await expect(page.getByText('Use a prefix sum and check overflow.', { exact: true })).toBeVisible();
+  await expect(page.locator('section').getByText('Use a prefix sum and check overflow.', { exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Record outcome' }).click();
   await page.getByRole('button', { name: 'Needed a hint' }).click();
   await page.getByRole('button', { name: 'Done', exact: true }).click();
@@ -70,8 +83,11 @@ test('mobile sign-in and navigation render without horizontal overflow', async (
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   await page.getByRole('button', { name: 'Try Demo User (Read-Only)' }).click();
   await expect(page).toHaveURL(/\/today$/);
+  await page.goto('/setup');
+  await expect(page).toHaveURL(/\/today$/);
   await page.getByRole('button', { name: 'Toggle menu' }).click();
   await page.getByRole('link', { name: 'Upsolve Queue', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Add problem', exact: true })).toBeDisabled();
+  await expect(page.locator('a[href^="/queue/"]:visible').first()).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 });

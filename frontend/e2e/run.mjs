@@ -24,6 +24,7 @@ const cf = createServer((req, res) => {
 await new Promise(resolve => cf.listen(0, '127.0.0.1', resolve));
 let container, backend;
 const log = createWriteStream('e2e-backend.log');
+const backendErrors = [];
 try {
   container = execFileSync('docker', ['run', '-d', '--rm', '-e', 'POSTGRES_PASSWORD=audit', '-e', 'POSTGRES_DB=upsolve', '-p', '127.0.0.1::5432', 'postgres:16-alpine'], { encoding: 'utf8', windowsHide: true }).trim();
   const port = execFileSync('docker', ['port', container, '5432/tcp'], { encoding: 'utf8', windowsHide: true }).trim().split(':').at(-1);
@@ -38,6 +39,13 @@ try {
     stdio: ['ignore', 'pipe', 'pipe'],
   });
   backend.stdout.pipe(log); backend.stderr.pipe(log);
+  // Detect backend failures even when the response was committed before session persistence failed.
+  let pendingLine = '';
+  backend.stdout.on('data', chunk => {
+    const lines = (pendingLine + chunk.toString()).split('\n');
+    pendingLine = lines.pop();
+    backendErrors.push(...lines.filter(line => /\bERROR\b/.test(line)));
+  });
   for (let i=0; i<120; i++) {
     try { const res = await fetch('http://127.0.0.1:18080/api/v1/health'); if (res.ok) break; }
     catch { /* waiting for backend */ }
@@ -51,6 +59,10 @@ try {
     windowsHide: true, stdio: 'inherit', env: { ...process.env, API_PROXY_TARGET: 'http://127.0.0.1:18080' },
   });
   process.exitCode = await new Promise(resolve => playwright.on('exit', code => resolve(code ?? 1)));
+  if (backendErrors.length) {
+    console.error('Backend errors occurred during browser tests; inspect e2e-backend.log:', backendErrors);
+    process.exitCode = 1;
+  }
 } finally {
   if (backend) { backend.kill(); await new Promise(resolve => backend.exitCode !== null ? resolve() : backend.once('exit', resolve)); }
   if (container) execFileSync('docker', ['stop', container], { stdio: 'ignore', windowsHide: true });

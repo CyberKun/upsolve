@@ -22,5 +22,9 @@ export function ProtectedRoute({ children }: { children?: React.ReactNode }) {
     return <Navigate to="/setup" replace />;
   }
 
+  if (user?.setupComplete && location.pathname === '/setup') {
+    return <Navigate to="/today" replace />;
+  }
+
   return children ? <>{children}</> : <Outlet />;
 }

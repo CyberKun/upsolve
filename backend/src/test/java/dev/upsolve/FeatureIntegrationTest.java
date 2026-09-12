@@ -21,6 +21,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.*;
 import java.time.*;
 import java.util.*;
+import java.util.concurrent.*;
 import java.util.stream.IntStream;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -93,6 +94,27 @@ class FeatureIntegrationTest {
         session = null;
         call(get("/auth/me"), null, 401);
         call(post("/auth/login"), Map.of("username", "tester", "password", "wrong"), 401);
+    }
+
+    @Test void concurrentAuthenticatedReadsKeepTheLoginSessionStable() throws Exception {
+        Cookie loginSession = session;
+        try (var executor = Executors.newFixedThreadPool(8)) {
+            var reads = new ArrayList<Future<MvcResult>>();
+            for (int i = 0; i < 24; i++) {
+                reads.add(executor.submit(() -> mvc.perform(get("/api/v1/auth/me").cookie(loginSession)).andReturn()));
+            }
+            for (var read : reads) {
+                var response = read.get(15, TimeUnit.SECONDS).getResponse();
+                assertThat(response.getStatus()).isEqualTo(200);
+                assertThat(json.readTree(response.getContentAsString()).get("id").asText()).isEqualTo(userId.toString());
+                assertThat(response.getCookie("UPSOLVE_SESSION")).isNull();
+            }
+        }
+        assertThat(jdbc.queryForObject("SELECT count(*) FROM spring_session_attributes WHERE attribute_name = 'SPRING_SECURITY_CONTEXT'", Integer.class)).isZero();
+        call(post("/auth/login"), Map.of("username", "tester", "password", "password123"), 200);
+        assertThat(session.getValue()).isNotEqualTo(loginSession.getValue());
+        assertThat(mvc.perform(get("/api/v1/auth/me").cookie(loginSession)).andReturn().getResponse().getStatus()).isEqualTo(401);
+        call(get("/auth/me"), null, 200);
     }
 
     @Test void setupPreferencesValidationAndSyncEnqueue() throws Exception {

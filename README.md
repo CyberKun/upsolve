@@ -2,10 +2,12 @@
 
 A competitive programming practice workspace backed by Codeforces data. Track your upsolving, record what you learned, schedule reviews, and inspect your practice patterns.
 
+Read the [PDF user guide](output/pdf/Upsolve-User-Guide.pdf) for setup, daily practice, notes, reviews, Insights, export, and local troubleshooting.
+
 ## Prerequisites
 
 - Java 21 (Eclipse Temurin recommended)
-- Node.js 20+
+- Node.js 20.19+ (or 22.12+)
 - Docker and Docker Compose v2
 - Maven 3.9+ (or use the included Maven Wrapper)
 
@@ -72,14 +74,24 @@ Requires Docker for Testcontainers.
 ```bash
 cd frontend
 npm test
+npm run lint
+npm run type-check
+npm run build
+npm audit
 ```
 
 **E2E tests:**
+Build the backend JAR first with `./mvnw verify` (Windows: `.\mvnw.cmd verify`). Keep Docker running and Java 21 on PATH.
+
 ```bash
 cd frontend
-npx playwright install
+npx playwright install chromium
 npm run test:e2e
 ```
+
+The runner starts a disposable PostgreSQL database, a deterministic Codeforces stub, the backend on port 18080, and Vite on port 15173. These ports must be free. It leaves the development database intact and fails on browser assertions, HTTP 5xx responses, or backend ERROR logs. Diagnostics are in `frontend/e2e-backend.log` and `frontend/test-results/`.
+
+See [feature audit](docs/feature-audit.md) for coverage and known limits, and [API contract](docs/api-contract.md) for current endpoints.
 
 ## Configuration
 
@@ -90,6 +102,8 @@ npm run test:e2e
 | `DB_USER` | `upsolve` | Database username |
 | `DB_PASS` | `upsolve` | Database password |
 | `SPRING_PROFILES_ACTIVE` | `default` | Spring profiles |
+| `CF_API_BASE_URL` | `https://codeforces.com/api` | Codeforces API base URL |
+| `CF_RATE_LIMIT_MS` | `2500` | Minimum delay between Codeforces calls |
 
 ## Project Structure
 
