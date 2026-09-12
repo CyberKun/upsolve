@@ -1,0 +1,16 @@
+FROM maven:3.9.9-eclipse-temurin-21-alpine AS build
+WORKDIR /app
+COPY pom.xml ./
+RUN mvn dependency:go-offline -B -ntp
+COPY src/ src/
+RUN mvn package -DskipTests -B -ntp
+
+FROM eclipse-temurin:21-jre-alpine
+WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar
+ENV SERVER_PORT=80 \
+    SERVER_FORWARD_HEADERS_STRATEGY=framework \
+    SERVER_SERVLET_SESSION_COOKIE_SECURE=true \
+    JAVA_TOOL_OPTIONS="-XX:MaxRAMPercentage=70"
+EXPOSE 80
+ENTRYPOINT ["java", "-jar", "app.jar"]

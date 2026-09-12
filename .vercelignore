@@ -1,0 +1,14 @@
+.env
+.env.*
+!.env.example
+.git
+backend/target
+backend/.mvn/wrapper/maven-*
+frontend/node_modules
+frontend/dist
+frontend/.cache
+frontend/test-results
+frontend/playwright-report
+tmp
+*.log
+**/*.log
