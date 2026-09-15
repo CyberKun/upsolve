@@ -69,7 +69,7 @@ export function SettingsPage() {
     );
   }
 
-  if (prefsError || syncError) return <p role="alert" className="text-red-600">{(prefsError || syncError)?.message}</p>;
+  if (prefsError || syncError) return <p role="alert" className="text-error">{(prefsError || syncError)?.message}</p>;
 
   const onSubmit = (data: SettingsFormData) => {
     setSaveStatus('saving');
@@ -124,14 +124,14 @@ export function SettingsPage() {
     <div className="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8 pb-24">
       <PageHeader title="Settings" />
 
-      <form onSubmit={handleSubmit(onSubmit)} className="bg-white border border-[#E5E2DB] rounded-lg shadow-sm">
+      <form onSubmit={handleSubmit(onSubmit)} className="bg-primary-bg border border-border rounded-lg shadow-sm shadow-theme">
         
         {/* Tracked Handle (Read-only) */}
         <div className="p-6">
-          <h3 className="text-lg font-medium text-[#242824] mb-4">Tracked Handle</h3>
-          <div className="flex items-center space-x-3 text-[#6B7280]">
-            <Lock className="w-5 h-5 text-gray-400" />
-            <span className="font-medium text-[#242824] bg-gray-100 px-3 py-1.5 rounded-md">
+          <h3 className="text-lg font-medium text-primary-text mb-4">Tracked Handle</h3>
+          <div className="flex items-center space-x-3 text-secondary-text">
+            <Lock className="w-5 h-5 text-secondary-text" />
+            <span className="font-medium text-primary-text bg-secondary-bg px-3 py-1.5 rounded-md">
               {prefs?.trackedHandle || 'No handle linked'}
             </span>
             <span className="text-sm">Cannot be changed after setup.</span>
@@ -139,36 +139,36 @@ export function SettingsPage() {
         </div>
 
         {/* Target Range */}
-        <div className="p-6 border-t border-[#E5E2DB]">
-          <h3 className="text-lg font-medium text-[#242824] mb-1">Target Rating Range</h3>
-          <p className="text-sm text-[#6B7280] mb-4">The rating band of problems you want to practice.</p>
+        <div className="p-6 border-t border-border">
+          <h3 className="text-lg font-medium text-primary-text mb-1">Target Rating Range</h3>
+          <p className="text-sm text-secondary-text mb-4">The rating band of problems you want to practice.</p>
           <div className="flex items-center space-x-4 max-w-xs">
             <div>
-              <label className="block text-xs text-gray-500 mb-1">Min</label>
-              <input type="number" {...register('targetRatingMin', { valueAsNumber: true })} className="w-full border border-[#E5E2DB] rounded-md px-3 py-2 text-sm focus:border-[#35634E] focus:ring-1 focus:ring-[#35634E]" />
-              {errors.targetRatingMin && <p className="text-xs text-red-500 mt-1">{errors.targetRatingMin.message}</p>}
+              <label className="block text-xs text-secondary-text mb-1">Min</label>
+              <input type="number" {...register('targetRatingMin', { valueAsNumber: true })} className="w-full border border-border rounded-md px-3 py-2 text-sm focus:border-accent focus:ring-1 focus:ring-accent" />
+              {errors.targetRatingMin && <p className="text-xs text-error mt-1">{errors.targetRatingMin.message}</p>}
             </div>
-            <span className="text-gray-400 mt-4">-</span>
+            <span className="text-secondary-text mt-4">-</span>
             <div>
-              <label className="block text-xs text-gray-500 mb-1">Max</label>
-              <input type="number" {...register('targetRatingMax', { valueAsNumber: true })} className="w-full border border-[#E5E2DB] rounded-md px-3 py-2 text-sm focus:border-[#35634E] focus:ring-1 focus:ring-[#35634E]" />
-              {errors.targetRatingMax && <p className="text-xs text-red-500 mt-1">{errors.targetRatingMax.message}</p>}
+              <label className="block text-xs text-secondary-text mb-1">Max</label>
+              <input type="number" {...register('targetRatingMax', { valueAsNumber: true })} className="w-full border border-border rounded-md px-3 py-2 text-sm focus:border-accent focus:ring-1 focus:ring-accent" />
+              {errors.targetRatingMax && <p className="text-xs text-error mt-1">{errors.targetRatingMax.message}</p>}
             </div>
           </div>
         </div>
 
         {/* Preferred Topics */}
-        <div className="p-6 border-t border-[#E5E2DB]">
-          <h3 className="text-lg font-medium text-[#242824] mb-1">Preferred Topics</h3>
-          <p className="text-sm text-[#6B7280] mb-4">Select the topics you want to focus on.</p>
+        <div className="p-6 border-t border-border">
+          <h3 className="text-lg font-medium text-primary-text mb-1">Preferred Topics</h3>
+          <p className="text-sm text-secondary-text mb-4">Select the topics you want to focus on.</p>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
             {TOPICS.map(topic => (
-              <label key={topic} className="flex items-center space-x-2 text-sm cursor-pointer hover:bg-gray-50 p-2 rounded-md transition-colors border border-transparent hover:border-gray-200">
+              <label key={topic} className="flex items-center space-x-2 text-sm cursor-pointer hover:bg-secondary-bg p-2 rounded-md transition-colors border border-clear hover:border-border">
                 <input
                   type="checkbox"
                   checked={selectedTopics.includes(topic)}
                   onChange={() => toggleTopic(topic)}
-                  className="rounded border-[#E5E2DB] text-[#35634E] focus:ring-[#35634E]"
+                  className="rounded border-border text-accent focus:ring-accent"
                 />
                 <span className="capitalize">{topic}</span>
               </label>
@@ -177,10 +177,10 @@ export function SettingsPage() {
         </div>
 
         {/* Time Zone */}
-        <div className="p-6 border-t border-[#E5E2DB]">
-          <h3 className="text-lg font-medium text-[#242824] mb-1">Time Zone</h3>
-          <p className="text-sm text-[#6B7280] mb-4">Used for calculating daily review schedules.</p>
-          <select {...register('timeZone')} className="max-w-xs w-full border border-[#E5E2DB] rounded-md px-3 py-2 text-sm focus:border-[#35634E] focus:ring-1 focus:ring-[#35634E]">
+        <div className="p-6 border-t border-border">
+          <h3 className="text-lg font-medium text-primary-text mb-1">Time Zone</h3>
+          <p className="text-sm text-secondary-text mb-4">Used for calculating daily review schedules.</p>
+          <select {...register('timeZone')} className="max-w-xs w-full border border-border rounded-md px-3 py-2 text-sm focus:border-accent focus:ring-1 focus:ring-accent">
             {[...new Set([...TIME_ZONES, ...(prefs?.timeZone ? [prefs.timeZone] : [])])].map(tz => (
               <option key={tz} value={tz}>{tz}</option>
             ))}
@@ -188,23 +188,23 @@ export function SettingsPage() {
         </div>
 
         {/* Review Intervals */}
-        <div className="p-6 border-t border-[#E5E2DB]">
-          <h3 className="text-lg font-medium text-[#242824] mb-1">Spaced Repetition Intervals</h3>
-          <p className="text-sm text-[#6B7280] mb-4">Number of days between reviews (comma-separated).</p>
-          <input type="text" {...register('reviewIntervals')} placeholder="1, 3, 7, 14, 30" className="max-w-md w-full border border-[#E5E2DB] rounded-md px-3 py-2 text-sm focus:border-[#35634E] focus:ring-1 focus:ring-[#35634E]" />
-          {errors.reviewIntervals && <p className="text-xs text-red-500 mt-1">{errors.reviewIntervals.message}</p>}
+        <div className="p-6 border-t border-border">
+          <h3 className="text-lg font-medium text-primary-text mb-1">Spaced Repetition Intervals</h3>
+          <p className="text-sm text-secondary-text mb-4">Number of days between reviews (comma-separated).</p>
+          <input type="text" {...register('reviewIntervals')} placeholder="1, 3, 7, 14, 30" className="max-w-md w-full border border-border rounded-md px-3 py-2 text-sm focus:border-accent focus:ring-1 focus:ring-accent" />
+          {errors.reviewIntervals && <p className="text-xs text-error mt-1">{errors.reviewIntervals.message}</p>}
         </div>
 
         {/* Submit action */}
-        <div className="p-6 border-t border-[#E5E2DB] bg-gray-50 flex items-center justify-between rounded-b-lg">
+        <div className="p-6 border-t border-border bg-secondary-bg flex items-center justify-between rounded-b-lg">
           <div className="text-sm">
-            {isDirty && saveStatus === 'idle' && <span className="text-amber-600">You have unsaved changes</span>}
-            {saveStatus === 'error' && <span className="text-red-600">{errorMsg}</span>}
+            {isDirty && saveStatus === 'idle' && <span className="text-warning">You have unsaved changes</span>}
+            {saveStatus === 'error' && <span className="text-error">{errorMsg}</span>}
           </div>
           <button
             type="submit"
             disabled={isDemoMode || !isDirty || isUpdating || saveStatus === 'saving'}
-            className="flex items-center justify-center min-w-[120px] px-4 py-2 bg-[#35634E] text-white rounded-md text-sm font-medium hover:bg-[#2c5241] disabled:opacity-50 transition-colors shadow-sm"
+            className="flex items-center justify-center min-w-[120px] px-4 py-2 bg-accent text-on-accent rounded-md text-sm font-medium hover:bg-button-hover disabled:opacity-50 transition-colors shadow-sm shadow-theme"
           >
             {saveStatus === 'saving' || isUpdating ? (
               <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Saving...</>
@@ -218,14 +218,14 @@ export function SettingsPage() {
       </form>
 
       {/* Sync History */}
-      <div className="mt-8 bg-white border border-[#E5E2DB] rounded-lg shadow-sm">
+      <div className="mt-8 bg-primary-bg border border-border rounded-lg shadow-sm shadow-theme">
         <div className="p-6">
-          <h3 className="text-lg font-medium text-[#242824] mb-1">Sync History</h3>
-          <p className="text-sm text-[#6B7280] mb-4">Recent Codeforces synchronization jobs.</p>
+          <h3 className="text-lg font-medium text-primary-text mb-1">Sync History</h3>
+          <p className="text-sm text-secondary-text mb-4">Recent Codeforces synchronization jobs.</p>
           
-          <div className="overflow-x-auto border border-[#E5E2DB] rounded-md">
+          <div className="overflow-x-auto border border-border rounded-md">
             <table className="w-full text-sm text-left">
-              <thead className="bg-[#F6F5F1] text-[#6B7280] border-b border-[#E5E2DB]">
+              <thead className="bg-secondary-bg text-secondary-text border-b border-border">
                 <tr>
                   <th className="px-4 py-2 font-medium">Started</th>
                   <th className="px-4 py-2 font-medium">Status</th>
@@ -234,9 +234,9 @@ export function SettingsPage() {
                   <th className="px-4 py-2 font-medium">Duration</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#E5E2DB]">
+              <tbody className="divide-y divide-border">
                 {!syncHistory || syncHistory.length === 0 ? (
-                  <tr><td colSpan={5} className="px-4 py-4 text-center text-[#6B7280]">No sync history found</td></tr>
+                  <tr><td colSpan={5} className="px-4 py-4 text-center text-secondary-text">No sync history found</td></tr>
                 ) : (
                   syncHistory.slice(0, 5).map(job => {
                     const start = job.startedAt ? new Date(job.startedAt) : new Date(job.createdAt);
@@ -244,20 +244,20 @@ export function SettingsPage() {
                     const durationSecs = Math.round((end.getTime() - start.getTime()) / 1000);
                     
                     return (
-                      <tr key={job.id} className="hover:bg-gray-50">
+                      <tr key={job.id} className="hover:bg-secondary-bg">
                         <td className="px-4 py-3">{start.toLocaleString()}</td>
                         <td className="px-4 py-3">
                           <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                            job.state === 'COMPLETED' ? 'bg-green-100 text-green-800' :
-                            job.state === 'FAILED' ? 'bg-red-100 text-red-800' :
-                            'bg-blue-100 text-blue-800'
+                            job.state === 'COMPLETED' ? 'bg-success-light text-success' :
+                            job.state === 'FAILED' ? 'bg-error-light text-error' :
+                            'bg-info-light text-info'
                           }`}>
                             {job.state}
                           </span>
                         </td>
                         <td className="px-4 py-3">{job.totalSubmissionsFetched}</td>
                         <td className="px-4 py-3">{job.problemsAddedToQueue}</td>
-                        <td className="px-4 py-3 text-gray-500">{durationSecs}s</td>
+                        <td className="px-4 py-3 text-secondary-text">{durationSecs}s</td>
                       </tr>
                     );
                   })
@@ -270,19 +270,19 @@ export function SettingsPage() {
 
       {/* Account Actions */}
       <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="bg-white border border-[#E5E2DB] rounded-lg p-6 shadow-sm flex flex-col items-start">
-          <h3 className="text-lg font-medium text-[#242824] mb-2">Export Data</h3>
-          <p className="text-sm text-[#6B7280] mb-4 flex-1">Download all your queue items, notes, and review history as a JSON file.</p>
-          <button onClick={handleExport} className="inline-flex items-center px-4 py-2 border border-[#E5E2DB] text-[#242824] rounded-md hover:bg-gray-50 transition-colors text-sm font-medium">
-            <Download className="w-4 h-4 mr-2 text-gray-500" />
+        <div className="bg-primary-bg border border-border rounded-lg p-6 shadow-sm shadow-theme flex flex-col items-start">
+          <h3 className="text-lg font-medium text-primary-text mb-2">Export Data</h3>
+          <p className="text-sm text-secondary-text mb-4 flex-1">Download all your queue items, notes, and review history as a JSON file.</p>
+          <button onClick={handleExport} className="inline-flex items-center px-4 py-2 border border-border text-primary-text rounded-md hover:bg-secondary-bg transition-colors text-sm font-medium">
+            <Download className="w-4 h-4 mr-2 text-secondary-text" />
             Export all data
           </button>
         </div>
 
-        <div className="bg-white border border-[#E5E2DB] rounded-lg p-6 shadow-sm flex flex-col items-start border-red-100">
-          <h3 className="text-lg font-medium text-red-600 mb-2">Logout</h3>
-          <p className="text-sm text-[#6B7280] mb-4 flex-1">Sign out of your account on this device.</p>
-          <button onClick={handleLogout} className="inline-flex items-center px-4 py-2 border border-red-200 text-red-600 bg-red-50 rounded-md hover:bg-red-100 transition-colors text-sm font-medium">
+        <div className="bg-primary-bg border border-border rounded-lg p-6 shadow-sm shadow-theme flex flex-col items-start border-error-light">
+          <h3 className="text-lg font-medium text-error mb-2">Logout</h3>
+          <p className="text-sm text-secondary-text mb-4 flex-1">Sign out of your account on this device.</p>
+          <button onClick={handleLogout} className="inline-flex items-center px-4 py-2 border border-error-light text-error bg-error-light rounded-md hover:bg-error-light transition-colors text-sm font-medium">
             <LogOut className="w-4 h-4 mr-2" />
             Logout
           </button>

@@ -4,23 +4,23 @@ interface RatingLabelProps {
 
 export function RatingLabel({ rating }: RatingLabelProps) {
   if (rating === null || rating === undefined) {
-    return <span className="font-mono text-sm text-gray-400">—</span>;
+    return <span className="font-mono text-sm text-secondary-text">—</span>;
   }
 
-  let colorClass = 'text-gray-500'; // Default (< 1200)
+  let colorClass = 'text-secondary-text'; // Default (< 1200)
   
   if (rating >= 2400) {
-    colorClass = 'text-red-600';
+    colorClass = 'text-error';
   } else if (rating >= 2100) {
-    colorClass = 'text-orange-500';
+    colorClass = 'text-warning';
   } else if (rating >= 1900) {
-    colorClass = 'text-purple-600';
+    colorClass = 'text-highlight';
   } else if (rating >= 1600) {
-    colorClass = 'text-blue-600';
+    colorClass = 'text-info';
   } else if (rating >= 1400) {
-    colorClass = 'text-cyan-600';
+    colorClass = 'text-info';
   } else if (rating >= 1200) {
-    colorClass = 'text-green-600';
+    colorClass = 'text-success';
   }
 
   return (

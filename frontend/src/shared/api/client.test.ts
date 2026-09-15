@@ -24,6 +24,22 @@ it('announces session expiry and preserves server errors', async () => {
   window.removeEventListener('auth-expired', listener);
 });
 
+it('explains an empty proxy error when the backend is unavailable', async () => {
+  vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response('', { status: 500 })));
+  await expect(api.post('/auth/login', { username: 'demo', password: 'demo123' })).rejects.toMatchObject({
+    status: 500,
+    message: 'The Upsolve server is unavailable. Please try again once the backend is running.',
+  });
+});
+
+it('explains network failures without hiding aborted requests', async () => {
+  vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new TypeError('Failed to fetch')));
+  await expect(api.get('/auth/me')).rejects.toMatchObject({ status: 0, message: 'Cannot reach the Upsolve server. Check your connection and try again.' });
+  const aborted = new DOMException('Aborted', 'AbortError');
+  vi.stubGlobal('fetch', vi.fn().mockRejectedValue(aborted));
+  await expect(api.get('/auth/me')).rejects.toBe(aborted);
+});
+
 it.each([
   ['https://codeforces.com/contest/1900/problem/A', true],
   ['https://codeforces.com/problemset/problem/1900/A', true],

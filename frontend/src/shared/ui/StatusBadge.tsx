@@ -4,9 +4,9 @@ interface StatusBadgeProps {
 
 export function StatusBadge({ status }: StatusBadgeProps) {
   const styles = {
-    PENDING: 'bg-gray-100 text-gray-600',
-    ATTEMPTED: 'bg-amber-50 text-amber-700',
-    SOLVED: 'bg-[#EBF5F0] text-[#35634E]',
+    PENDING: 'bg-secondary-bg text-secondary-text',
+    ATTEMPTED: 'bg-warning-light text-warning',
+    SOLVED: 'bg-accent-light text-accent',
   };
 
   const labels = {

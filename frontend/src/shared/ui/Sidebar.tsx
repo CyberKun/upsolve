@@ -17,10 +17,10 @@ export function Sidebar({ onClose, className = '' }: SidebarProps) {
   ];
 
   return (
-    <div className={`flex flex-col h-full bg-white ${className}`}>
+    <div className={`flex flex-col h-full bg-primary-bg ${className}`}>
       {/* Brand - Desktop Only (Mobile shows it in the top bar) */}
       <div className="hidden md:block p-6 mb-2">
-        <span className="font-mono text-lg font-semibold text-[#35634E] lowercase">upsolve</span>
+        <span className="font-mono text-lg font-semibold text-accent lowercase">upsolve</span>
       </div>
 
       <nav className="flex-1 px-3 space-y-1 overflow-y-auto md:pt-0 pt-6">
@@ -34,8 +34,8 @@ export function Sidebar({ onClose, className = '' }: SidebarProps) {
               className={({ isActive }) =>
                 `flex items-center gap-3 py-2 px-3 rounded-md text-sm transition-colors duration-150 ${
                   isActive
-                    ? 'bg-[#EBF5F0] text-[#35634E] font-medium'
-                    : 'text-[#6B7280] hover:bg-[#F0EFEB] hover:text-[#242824]'
+                    ? 'bg-accent-light text-accent font-medium'
+                    : 'text-secondary-text hover:bg-surface-hover hover:text-primary-text'
                 }`
               }
             >

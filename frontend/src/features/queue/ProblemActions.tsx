@@ -23,9 +23,9 @@ export function ProblemActions({ item }: { item: QueueItemResponse }) {
   const error = update.error || schedule.error || snooze.error || loadError;
   const busy = isDemoMode || update.isPending || schedule.isPending || snooze.isPending;
   return (
-    <section className="bg-white border border-[#E5E2DB] rounded-lg p-6 mb-6 space-y-4">
+    <section className="bg-primary-bg border border-border rounded-lg p-6 mb-6 space-y-4">
       <h2 className="text-lg font-semibold">Practice and reviews</h2>
-      {error && <p role="alert" className="text-red-600 text-sm">{error.message}</p>}
+      {error && <p role="alert" className="text-error text-sm">{error.message}</p>}
       <div className="flex flex-wrap gap-4">
         <label className="text-sm">Status
           <select aria-label="Status" className="border rounded p-2 ml-2" value={item.status} disabled={busy || item.status === 'SOLVED'}
@@ -48,7 +48,7 @@ export function ProblemActions({ item }: { item: QueueItemResponse }) {
         </button>
         {current && !current.paused && !item.archivedAt && <>
           <button className="border rounded px-3 py-2 disabled:opacity-50" disabled={busy} onClick={() => snooze.mutate({ days: 1 })}>Snooze 1 day</button>
-          <button className="bg-[#35634E] text-white rounded px-3 py-2 disabled:opacity-50" disabled={busy} onClick={() => setReviewing(true)}>Start review</button>
+          <button className="bg-accent text-on-accent rounded px-3 py-2 disabled:opacity-50" disabled={busy} onClick={() => setReviewing(true)}>Start review</button>
         </>}
       </div>
       {reviewing && <div><button className="text-sm underline mb-3" onClick={() => setReviewing(false)}>Close review</button><ReviewSession queueItemId={item.id} onClose={() => setReviewing(false)} /></div>}

@@ -79,24 +79,26 @@ export function AddProblemDialog({ children }: { children: ReactNode }) {
       </Dialog.Trigger>
       
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 bg-black/50 z-40" />
-        <Dialog.Content className="fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] bg-white rounded-lg shadow-xl w-full max-w-md p-6 z-50">
+        <Dialog.Overlay className="fixed inset-0 bg-overlay z-40" />
+        <Dialog.Content className="fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] bg-primary-bg rounded-lg shadow-xl shadow-theme w-full max-w-md p-6 z-50">
           <Dialog.Title className="text-lg font-semibold mb-4">Add problem to queue</Dialog.Title>
           <Dialog.Description className="sr-only">Search the catalog or paste a Codeforces problem URL.</Dialog.Description>
           
-          <Dialog.Close aria-label="Close dialog" className="absolute top-3 right-3 p-1 hover:bg-gray-100 rounded-md transition-colors">
-            <X className="w-5 h-5 text-gray-500" />
+          <Dialog.Close aria-label="Close dialog" className="absolute top-3 right-3 p-1 hover:bg-secondary-bg rounded-md transition-colors">
+            <X className="w-5 h-5 text-secondary-text" />
           </Dialog.Close>
 
           <div className="flex space-x-2 mb-6">
             <button
-              className={`flex-1 py-2 text-sm rounded-md transition-colors ${mode === 'search' ? 'bg-[#35634E] text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+              aria-pressed={mode === 'search'}
+              className={`flex-1 py-2 text-sm rounded-md transition-colors ${mode === 'search' ? 'bg-accent text-on-accent' : 'bg-secondary-bg text-secondary-text hover:bg-surface-hover'}`}
               onClick={() => setMode('search')}
             >
               Search catalog
             </button>
             <button
-              className={`flex-1 py-2 text-sm rounded-md transition-colors ${mode === 'url' ? 'bg-[#35634E] text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+              aria-pressed={mode === 'url'}
+              className={`flex-1 py-2 text-sm rounded-md transition-colors ${mode === 'url' ? 'bg-accent text-on-accent' : 'bg-secondary-bg text-secondary-text hover:bg-surface-hover'}`}
               onClick={() => setMode('url')}
             >
               Enter URL
@@ -106,68 +108,72 @@ export function AddProblemDialog({ children }: { children: ReactNode }) {
           {mode === 'search' ? (
             <div className="space-y-4 h-64 flex flex-col">
               <div className="relative">
-                <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
+                <Search className="absolute left-3 top-2.5 w-4 h-4 text-secondary-text" />
                 <input
                   type="text"
-                  className="w-full pl-9 pr-3 py-2 border border-[#E5E2DB] rounded-md text-sm focus:border-[#35634E] focus:ring-1 focus:ring-[#35634E]"
+                  className="w-full pl-9 pr-3 py-2 border border-border rounded-md text-sm focus:border-accent focus:ring-1 focus:ring-accent"
                   placeholder="Search by name or ID..."
+                  aria-label="Search the problem catalog"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
               
-              <div className="flex-1 overflow-y-auto border border-[#E5E2DB] rounded-md">
+              <div className="flex-1 overflow-y-auto border border-border rounded-md">
                 {isSearching ? (
-                  <div className="p-4 text-center text-sm text-gray-500">Searching...</div>
+                  <div className="p-4 text-center text-sm text-secondary-text">Searching...</div>
                 ) : searchResults?.content && searchResults.content.length > 0 ? (
-                  <ul className="divide-y divide-[#E5E2DB]">
+                  <ul className="divide-y divide-border">
                     {searchResults.content.map((problem) => (
-                      <li
-                        key={problem.id}
-                        className={`p-3 cursor-pointer hover:bg-gray-50 transition-colors border-l-2 ${selectedProblem?.id === problem.id ? 'border-[#35634E] bg-green-50/50' : 'border-transparent'}`}
+                      <li key={problem.id}>
+                        <button type="button" aria-pressed={selectedProblem?.id === problem.id}
+                        className={`w-full p-3 text-left hover:bg-secondary-bg transition-colors border-l-2 ${selectedProblem?.id === problem.id ? 'border-accent bg-success-light' : 'border-clear'}`}
                         onClick={() => setSelectedProblem(problem)}
                       >
                         <div className="flex items-center justify-between">
                           <div>
                             <div className="text-sm font-medium">{problem.name}</div>
-                            <div className="text-xs text-gray-500 font-mono mt-0.5">
+                            <div className="text-xs text-secondary-text font-mono mt-0.5">
                               {problem.contestId}{problem.problemIndex}
                             </div>
                           </div>
                           {problem.rating && <RatingLabel rating={problem.rating} />}
                         </div>
+                        </button>
                       </li>
                     ))}
                   </ul>
                 ) : debouncedSearch.length >= 2 ? (
-                  <div className="p-4 text-center text-sm text-gray-500">No problems found</div>
+                  <div className="p-4 text-center text-sm text-secondary-text">No problems found</div>
                 ) : (
-                  <div className="p-4 text-center text-sm text-gray-500">Type at least 2 characters to search</div>
+                  <div className="p-4 text-center text-sm text-secondary-text">Type at least 2 characters to search</div>
                 )}
               </div>
             </div>
           ) : (
             <div className="space-y-4 mb-auto">
               <div className="relative">
-                <LinkIcon className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
+                <LinkIcon className="absolute left-3 top-2.5 w-4 h-4 text-secondary-text" />
                 <input
                   type="url"
-                  className="w-full pl-9 pr-3 py-2 border border-[#E5E2DB] rounded-md text-sm focus:border-[#35634E] focus:ring-1 focus:ring-[#35634E]"
+                  aria-label="Codeforces problem URL"
+                  className="w-full pl-9 pr-3 py-2 border border-border rounded-md text-sm focus:border-accent focus:ring-1 focus:ring-accent"
                   placeholder="https://codeforces.com/contest/.../problem/..."
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
                 />
               </div>
               {url && !isCfUrl(url) && (
-                <div className="text-xs text-red-500">Please enter a valid Codeforces problem URL</div>
+                <div className="text-xs text-error">Please enter a valid Codeforces problem URL</div>
               )}
             </div>
           )}
 
           <div className="mt-6">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Priority</label>
+            <label htmlFor="add-problem-priority" className="block text-sm font-medium text-primary-text mb-1">Priority</label>
             <select
-              className="w-full border border-[#E5E2DB] rounded-md p-2 text-sm focus:border-[#35634E] focus:ring-1 focus:ring-[#35634E]"
+              id="add-problem-priority"
+              className="w-full border border-border rounded-md p-2 text-sm focus:border-accent focus:ring-1 focus:ring-accent"
               value={priority}
               onChange={(e) => setPriority(e.target.value as 'LOW' | 'MEDIUM' | 'HIGH')}
             >
@@ -178,20 +184,20 @@ export function AddProblemDialog({ children }: { children: ReactNode }) {
           </div>
 
           {errorMsg && (
-            <div className="mt-4 p-2 bg-red-50 text-red-600 text-sm rounded-md border border-red-100">
+            <div className="mt-4 p-2 bg-error-light text-error text-sm rounded-md border border-error-light">
               {errorMsg}
             </div>
           )}
 
           <div className="mt-6 flex justify-end space-x-3">
             <button
-              className="px-4 py-2 text-sm text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
+              className="px-4 py-2 text-sm text-secondary-text bg-secondary-bg rounded-md hover:bg-surface-hover transition-colors"
               onClick={() => handleOpenChange(false)}
             >
               Cancel
             </button>
             <button
-              className="px-4 py-2 text-sm text-white bg-[#35634E] rounded-md hover:bg-[#2c5241] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+              className="px-4 py-2 text-sm text-on-accent bg-accent rounded-md hover:bg-button-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
               onClick={handleSubmit}
               disabled={!isValid || isAdding}
             >

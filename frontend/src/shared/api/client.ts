@@ -39,11 +39,17 @@ export async function fetchApi<T>(url: string, options: RequestInit = {}): Promi
     headers.set('Content-Type', 'application/json');
   }
 
-  const response = await fetch(fullUrl, {
-    ...options,
-    headers,
-    credentials: 'include',
-  });
+  let response: Response;
+  try {
+    response = await fetch(fullUrl, {
+      ...options,
+      headers,
+      credentials: 'include',
+    });
+  } catch (error) {
+    if (error && typeof error === 'object' && 'name' in error && error.name === 'AbortError') throw error;
+    throw new ApiError(0, 'Connection failed', 'Cannot reach the Upsolve server. Check your connection and try again.');
+  }
 
   if (response.status === 401) {
     // We could emit an event here for the AuthContext to handle
@@ -55,7 +61,12 @@ export async function fetchApi<T>(url: string, options: RequestInit = {}): Promi
     try {
       errorData = await response.json();
     } catch (e) {
-      errorData = { title: response.statusText, detail: 'An unexpected error occurred.' };
+      errorData = {
+        title: response.statusText,
+        detail: response.status >= 500
+          ? 'The Upsolve server is unavailable. Please try again once the backend is running.'
+          : 'The request failed. Please try again.',
+      };
     }
 
     throw new ApiError(

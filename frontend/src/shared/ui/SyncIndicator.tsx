@@ -44,13 +44,13 @@ export function SyncIndicator() {
     : 'Never synced';
 
   return (
-    <div className="px-3 py-3 border-t border-[#E5E2DB] bg-white">
+    <div className="px-3 py-3 border-t border-border bg-primary-bg">
       <div className="flex items-center justify-between">
         <div className="flex flex-col">
-          <span className="font-mono text-xs text-[#242824] truncate max-w-[120px]" title={trackedHandle}>
+          <span className="font-mono text-xs text-primary-text truncate max-w-[120px]" title={trackedHandle}>
             {trackedHandle}
           </span>
-          <span className="text-[10px] text-[#6B7280]">
+          <span className="text-[10px] text-secondary-text">
             {isSyncing ? 'Syncing...' : `Last sync: ${lastSyncTime}`}
           </span>
         </div>
@@ -59,8 +59,8 @@ export function SyncIndicator() {
           disabled={isSyncing || isLoading || !user?.setupComplete || isDemoMode}
           className={`p-1.5 rounded-md transition-colors ${
             isSyncing
-              ? 'text-[#35634E] bg-[#EBF5F0]'
-              : 'text-[#6B7280] hover:bg-[#F0EFEB] hover:text-[#242824]'
+              ? 'text-accent bg-accent-light'
+              : 'text-secondary-text hover:bg-surface-hover hover:text-primary-text'
           } disabled:opacity-50 disabled:cursor-not-allowed`}
           title={isDemoMode ? "Sync disabled in demo mode" : "Sync submissions"}
         >

@@ -70,17 +70,17 @@ export function SetupPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F6F5F1] flex flex-col items-center py-12 px-4 sm:px-6">
-      <div className="w-full max-w-lg bg-white p-8 rounded-lg shadow-sm border border-[#E5E2DB]">
+    <div className="min-h-screen bg-secondary-bg flex flex-col items-center py-12 px-4 sm:px-6">
+      <div className="w-full max-w-lg bg-primary-bg p-8 rounded-lg shadow-sm shadow-theme border border-border">
         <div className="mb-8">
-          <h1 className="text-2xl font-semibold text-[#242824]">Set up your practice workspace</h1>
-          <p className="text-sm text-[#6B7280] mt-2">
+          <h1 className="text-2xl font-semibold text-primary-text">Set up your practice workspace</h1>
+          <p className="text-sm text-secondary-text mt-2">
             Configure your Codeforces tracking and practice preferences.
           </p>
         </div>
 
         {globalError && (
-          <div className="mb-6 p-3 bg-red-50 border border-red-200 rounded-md">
+          <div className="mb-6 p-3 bg-error-light border border-error-light rounded-md">
             <InlineError message={globalError} />
           </div>
         )}
@@ -88,14 +88,14 @@ export function SetupPage() {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
           {/* Handle */}
           <section>
-            <h2 className="text-base font-medium text-[#242824] mb-1">Track a Codeforces handle</h2>
-            <p className="text-xs text-[#6B7280] mb-3">
+            <h2 className="text-base font-medium text-primary-text mb-1">Track a Codeforces handle</h2>
+            <p className="text-xs text-secondary-text mb-3">
               We'll import your public submission history. This does not verify ownership of the handle.
             </p>
             <input
               type="text"
               placeholder="Codeforces handle"
-              className="w-full px-3 py-2 border border-[#E5E2DB] rounded-md text-sm bg-white focus:outline-none focus:border-[#35634E] focus:ring-1 focus:ring-[#35634E] transition-colors"
+              className="w-full px-3 py-2 border border-border rounded-md text-sm bg-primary-bg focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-colors"
               {...register('handle')}
             />
             {errors.handle && <InlineError message={errors.handle.message as string} />}
@@ -103,22 +103,22 @@ export function SetupPage() {
 
           {/* Difficulty Range */}
           <section>
-            <h2 className="text-base font-medium text-[#242824] mb-3">Target Difficulty Range</h2>
+            <h2 className="text-base font-medium text-primary-text mb-3">Target Difficulty Range</h2>
             <div className="flex gap-4">
               <div className="flex-1">
-                <label className="block text-xs text-[#6B7280] mb-1">Min (800-3500)</label>
+                <label className="block text-xs text-secondary-text mb-1">Min (800-3500)</label>
                 <input
                   type="number"
-                  className="w-full px-3 py-2 border border-[#E5E2DB] rounded-md text-sm bg-white focus:outline-none focus:border-[#35634E] focus:ring-1 focus:ring-[#35634E] transition-colors"
+                  className="w-full px-3 py-2 border border-border rounded-md text-sm bg-primary-bg focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-colors"
                   {...register('minRating')}
                 />
                 {errors.minRating && <InlineError message={errors.minRating.message as string} />}
               </div>
               <div className="flex-1">
-                <label className="block text-xs text-[#6B7280] mb-1">Max (800-3500)</label>
+                <label className="block text-xs text-secondary-text mb-1">Max (800-3500)</label>
                 <input
                   type="number"
-                  className="w-full px-3 py-2 border border-[#E5E2DB] rounded-md text-sm bg-white focus:outline-none focus:border-[#35634E] focus:ring-1 focus:ring-[#35634E] transition-colors"
+                  className="w-full px-3 py-2 border border-border rounded-md text-sm bg-primary-bg focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-colors"
                   {...register('maxRating')}
                 />
                 {errors.maxRating && <InlineError message={errors.maxRating.message as string} />}
@@ -128,14 +128,14 @@ export function SetupPage() {
 
           {/* Topics */}
           <section>
-            <h2 className="text-base font-medium text-[#242824] mb-3">Preferred Topics</h2>
+            <h2 className="text-base font-medium text-primary-text mb-3">Preferred Topics</h2>
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 max-h-48 overflow-y-auto p-1">
               {TOPICS.map(topic => (
-                <label key={topic} className="flex items-center gap-2 cursor-pointer text-sm text-[#242824]">
+                <label key={topic} className="flex items-center gap-2 cursor-pointer text-sm text-primary-text">
                   <input
                     type="checkbox"
                     value={topic}
-                    className="rounded text-[#35634E] focus:ring-[#35634E] border-[#E5E2DB]"
+                    className="rounded text-accent focus:ring-accent border-border"
                     {...register('topics')}
                   />
                   {topic}
@@ -147,10 +147,10 @@ export function SetupPage() {
 
           {/* Timezone */}
           <section>
-            <h2 className="text-base font-medium text-[#242824] mb-1">Time Zone</h2>
-            <p className="text-xs text-[#6B7280] mb-3">Used for scheduling daily reviews.</p>
+            <h2 className="text-base font-medium text-primary-text mb-1">Time Zone</h2>
+            <p className="text-xs text-secondary-text mb-3">Used for scheduling daily reviews.</p>
             <select
-              className="w-full px-3 py-2 border border-[#E5E2DB] rounded-md text-sm bg-white focus:outline-none focus:border-[#35634E] focus:ring-1 focus:ring-[#35634E] transition-colors"
+              className="w-full px-3 py-2 border border-border rounded-md text-sm bg-primary-bg focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-colors"
               {...register('timezone')}
             >
               <option value={Intl.DateTimeFormat().resolvedOptions().timeZone}>
@@ -169,7 +169,7 @@ export function SetupPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full py-2.5 bg-[#35634E] hover:bg-[#2D5442] text-white text-sm font-medium rounded-md transition-colors disabled:opacity-50"
+            className="w-full py-2.5 bg-accent hover:bg-button-hover text-on-accent text-sm font-medium rounded-md transition-colors disabled:opacity-50"
           >
             {isSubmitting ? 'Saving...' : 'Start tracking'}
           </button>

@@ -2,6 +2,8 @@
 
 A competitive programming practice workspace backed by Codeforces data. Track your upsolving, record what you learned, schedule reviews, and inspect your practice patterns.
 
+The redesigned collection catalog is available at `/explore`. See the [frontend design handoff](docs/frontend-redesign.md) for palettes, components, data replacement, and validation commands.
+
 Read the [PDF user guide](output/pdf/Upsolve-User-Guide.pdf) for setup, daily practice, notes, reviews, Insights, export, and local troubleshooting.
 
 ## Prerequisites

@@ -81,7 +81,7 @@ export function QueuePage() {
         title="Upsolve Queue" 
         actions={
           <AddProblemDialog>
-            <button disabled={isDemoMode} className="disabled:opacity-50 flex items-center px-4 py-2 bg-[#35634E] text-white rounded-md hover:bg-[#2c5241] transition-colors text-sm font-medium shadow-sm">
+            <button disabled={isDemoMode} className="disabled:opacity-50 flex items-center px-4 py-2 bg-accent text-on-accent rounded-md hover:bg-button-hover transition-colors text-sm font-medium shadow-sm shadow-theme">
               <Plus className="w-4 h-4 mr-2" />
               Add problem
             </button>
@@ -90,15 +90,16 @@ export function QueuePage() {
       />
 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-        <div className="flex overflow-x-auto no-scrollbar space-x-1 bg-gray-100 p-1 rounded-lg">
+        <div className="flex overflow-x-auto no-scrollbar space-x-1 bg-secondary-bg p-1 rounded-lg">
           {TABS.map((tab) => (
             <button
               key={tab.id}
+              aria-pressed={currentTab === tab.id}
               onClick={() => handleTabChange(tab.id)}
               className={`px-4 py-1.5 text-sm font-medium rounded-md whitespace-nowrap transition-colors ${
                 currentTab === tab.id
-                  ? 'bg-white text-[#35634E] shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-200'
+                  ? 'bg-primary-bg text-accent shadow-sm shadow-theme'
+                  : 'text-secondary-text hover:text-primary-text hover:bg-surface-hover'
               }`}
             >
               {tab.label}
@@ -107,11 +108,12 @@ export function QueuePage() {
         </div>
 
         <div className="relative w-full sm:w-64">
-          <Search className="absolute left-3 top-2 w-4 h-4 text-gray-400" />
+          <Search className="absolute left-3 top-2 w-4 h-4 text-secondary-text" />
           <input
             type="text"
             placeholder="Search problems..."
-            className="w-full pl-9 pr-3 py-1.5 border border-[#E5E2DB] rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-[#35634E] focus:border-[#35634E]"
+            aria-label="Search problems"
+            className="w-full pl-9 pr-3 py-1.5 border border-border rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent"
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
           />
@@ -126,7 +128,7 @@ export function QueuePage() {
             <LoadingSkeleton className="h-16 w-full" />
             <LoadingSkeleton className="h-16 w-full" />
           </div>
-        ) : error ? (<p role="alert" className="text-red-600">{error.message}</p>) : !data || data.content.length === 0 ? (
+        ) : error ? (<p role="alert" className="text-error">{error.message}</p>) : !data || data.content.length === 0 ? (
           <EmptyState
             title="No problems found"
             description="Try adjusting your search or filters, or add a new problem to your queue."
@@ -144,22 +146,22 @@ export function QueuePage() {
             <QueueMobileList items={data.content} />
 
             {data.totalPages > 1 && (
-              <div className="mt-6 flex items-center justify-between border-t border-[#E5E2DB] pt-4">
-                <div className="text-sm text-gray-500">
+              <div className="mt-6 flex items-center justify-between border-t border-border pt-4">
+                <div className="text-sm text-secondary-text">
                   Showing {data.page * data.size + 1} to {Math.min((data.page + 1) * data.size, data.totalElements)} of {data.totalElements} results
                 </div>
                 <div className="flex space-x-2">
                   <button
                     onClick={() => handlePageChange(data.page - 1)}
                     disabled={data.page === 0}
-                    className="px-3 py-1 border border-[#E5E2DB] rounded-md text-sm hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-3 py-1 border border-border rounded-md text-sm hover:bg-secondary-bg disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Previous
                   </button>
                   <button
                     onClick={() => handlePageChange(data.page + 1)}
                     disabled={data.page === data.totalPages - 1}
-                    className="px-3 py-1 border border-[#E5E2DB] rounded-md text-sm hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-3 py-1 border border-border rounded-md text-sm hover:bg-secondary-bg disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Next
                   </button>

@@ -112,12 +112,12 @@ export function NotesEditor({ queueItemId }: { queueItemId: string }) {
   };
 
   return (
-    <div className="bg-white border border-[#E5E2DB] rounded-lg p-6">
+    <div className="bg-primary-bg border border-border rounded-lg p-6">
       <div className="space-y-6">
         <div>
           <label className="block text-sm font-medium mb-1">Where I got stuck</label>
           <textarea disabled={isDemoMode || isSaving} maxLength={10000}
-            className="w-full min-h-24 border border-[#E5E2DB] rounded-md p-3 text-sm resize-y focus:border-[#35634E] focus:ring-1 focus:ring-[#35634E]"
+            className="w-full min-h-24 border border-border rounded-md p-3 text-sm resize-y focus:border-accent focus:ring-1 focus:ring-accent"
             placeholder="What was the key difficulty?"
             value={stuckReason}
             onChange={(e) => setStuckReason(e.target.value)}
@@ -127,7 +127,7 @@ export function NotesEditor({ queueItemId }: { queueItemId: string }) {
         <div>
           <label className="block text-sm font-medium mb-1">Key observation</label>
           <textarea disabled={isDemoMode || isSaving} maxLength={10000}
-            className="w-full min-h-24 border border-[#E5E2DB] rounded-md p-3 text-sm resize-y focus:border-[#35634E] focus:ring-1 focus:ring-[#35634E]"
+            className="w-full min-h-24 border border-border rounded-md p-3 text-sm resize-y focus:border-accent focus:ring-1 focus:ring-accent"
             placeholder="What insight unlocked the solution?"
             value={keyObservation}
             onChange={(e) => setKeyObservation(e.target.value)}
@@ -137,7 +137,7 @@ export function NotesEditor({ queueItemId }: { queueItemId: string }) {
         <div>
           <label className="block text-sm font-medium mb-1">Approach and complexity</label>
           <textarea disabled={isDemoMode || isSaving} maxLength={10000}
-            className="w-full min-h-24 border border-[#E5E2DB] rounded-md p-3 text-sm resize-y focus:border-[#35634E] focus:ring-1 focus:ring-[#35634E]"
+            className="w-full min-h-24 border border-border rounded-md p-3 text-sm resize-y focus:border-accent focus:ring-1 focus:ring-accent"
             placeholder="Describe the approach and time/space complexity"
             value={approachComplexity}
             onChange={(e) => setApproachComplexity(e.target.value)}
@@ -147,7 +147,7 @@ export function NotesEditor({ queueItemId }: { queueItemId: string }) {
         <div>
           <label className="block text-sm font-medium mb-1">What to remember</label>
           <textarea disabled={isDemoMode || isSaving} maxLength={10000}
-            className="w-full min-h-24 border border-[#E5E2DB] rounded-md p-3 text-sm resize-y focus:border-[#35634E] focus:ring-1 focus:ring-[#35634E]"
+            className="w-full min-h-24 border border-border rounded-md p-3 text-sm resize-y focus:border-accent focus:ring-1 focus:ring-accent"
             placeholder="Key takeaways for future problems"
             value={whatToRemember}
             onChange={(e) => setWhatToRemember(e.target.value)}
@@ -161,7 +161,7 @@ export function NotesEditor({ queueItemId }: { queueItemId: string }) {
               <label key={cat.id} className="flex items-center space-x-2 text-sm cursor-pointer">
                 <input
                   type="checkbox" disabled={isDemoMode || isSaving}
-                  className="rounded border-[#E5E2DB] text-[#35634E] focus:ring-[#35634E]"
+                  className="rounded border-border text-accent focus:ring-accent"
                   checked={mistakeCategories.includes(cat.id)}
                   onChange={() => toggleCategory(cat.id)}
                 />
@@ -171,19 +171,19 @@ export function NotesEditor({ queueItemId }: { queueItemId: string }) {
           </div>
         </div>
 
-        <div className="flex items-center justify-between pt-4 border-t border-[#E5E2DB]">
+        <div className="flex items-center justify-between pt-4 border-t border-border">
           <div className="text-sm">
             {isDirty && saveStatus === 'idle' && (
-              <span className="text-amber-600">Unsaved changes</span>
+              <span className="text-warning">Unsaved changes</span>
             )}
             {saveStatus === 'error' && (
-              <span className="text-red-600">{errorMessage}</span>
+              <span className="text-error">{errorMessage}</span>
             )}
           </div>
           <button
             onClick={handleSave}
             disabled={isDemoMode || !isDirty || isSaving || saveStatus === 'saving'}
-            className="flex items-center justify-center min-w-[120px] px-4 py-2 bg-[#35634E] text-white rounded-md text-sm hover:bg-[#2c5241] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="flex items-center justify-center min-w-[120px] px-4 py-2 bg-accent text-on-accent rounded-md text-sm hover:bg-button-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {saveStatus === 'saving' || isSaving ? (
               <>

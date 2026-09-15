@@ -21,7 +21,7 @@ export function ReviewsPage() {
     );
   }
 
-  if (error) return <p role="alert" className="text-red-600">{(error)?.message}</p>;
+  if (error) return <p role="alert" className="text-error">{(error)?.message}</p>;
 
   const overdue = data?.overdue ?? [];
   const today = data?.today ?? [];
@@ -54,35 +54,35 @@ export function ReviewsPage() {
 
       {overdue.length > 0 && (
         <section className="mb-8">
-          <h2 className="flex items-center gap-2 text-sm font-semibold text-[#DC2626] mb-3">
+          <h2 className="flex items-center gap-2 text-sm font-semibold text-error mb-3">
             <AlertCircle size={16} />
             Overdue ({overdue.length})
           </h2>
           <div className="space-y-2">
             {overdue.map((item) => (
-              <div key={item.queueItemId} className="flex items-center justify-between bg-white p-4 rounded-lg border border-[#E5E2DB]">
+              <div key={item.queueItemId} className="flex items-center justify-between bg-primary-bg p-4 rounded-lg border border-border">
                 <div className="flex items-center gap-4">
                   <div>
-                    <div className="font-mono text-xs text-[#6B7280]">
+                    <div className="font-mono text-xs text-secondary-text">
                       {item.problem.contestId}{item.problem.problemIndex}
                     </div>
-                    <div className="font-medium text-[#242824]">{item.problem.name}</div>
+                    <div className="font-medium text-primary-text">{item.problem.name}</div>
                   </div>
                   <RatingLabel rating={item.problem.rating} />
-                  <span className="text-xs text-[#DC2626] font-medium bg-[#FEE2E2] px-2 py-0.5 rounded-full">
+                  <span className="text-xs text-error font-medium bg-error-light px-2 py-0.5 rounded-full">
                     Overdue
                   </span>
                 </div>
                 <div className="flex gap-2">
                   <button
                     onClick={() => setActiveReview(item.queueItemId)}
-                    className="px-3 py-1.5 bg-[#35634E] text-white text-sm rounded-md hover:bg-[#2D5442] transition-colors"
+                    className="px-3 py-1.5 bg-accent text-on-accent text-sm rounded-md hover:bg-button-hover transition-colors"
                   >
                     Start review
                   </button>
                   <Link
                     to={`/queue/${item.queueItemId}`}
-                    className="px-3 py-1.5 border border-[#E5E2DB] text-sm rounded-md hover:bg-[#F0EFEB] transition-colors"
+                    className="px-3 py-1.5 border border-border text-sm rounded-md hover:bg-surface-hover transition-colors"
                   >
                     Details
                   </Link>
@@ -95,24 +95,24 @@ export function ReviewsPage() {
 
       {today.length > 0 && (
         <section className="mb-8">
-          <h2 className="text-sm font-semibold text-[#35634E] mb-3">
+          <h2 className="text-sm font-semibold text-accent mb-3">
             Today ({today.length})
           </h2>
           <div className="space-y-2">
             {today.map((item) => (
-              <div key={item.queueItemId} className="flex items-center justify-between bg-white p-4 rounded-lg border border-[#E5E2DB]">
+              <div key={item.queueItemId} className="flex items-center justify-between bg-primary-bg p-4 rounded-lg border border-border">
                 <div className="flex items-center gap-4">
                   <div>
-                    <div className="font-mono text-xs text-[#6B7280]">
+                    <div className="font-mono text-xs text-secondary-text">
                       {item.problem.contestId}{item.problem.problemIndex}
                     </div>
-                    <div className="font-medium text-[#242824]">{item.problem.name}</div>
+                    <div className="font-medium text-primary-text">{item.problem.name}</div>
                   </div>
                   <RatingLabel rating={item.problem.rating} />
                 </div>
                 <button
                   onClick={() => setActiveReview(item.queueItemId)}
-                  className="px-3 py-1.5 bg-[#35634E] text-white text-sm rounded-md hover:bg-[#2D5442] transition-colors"
+                  className="px-3 py-1.5 bg-accent text-on-accent text-sm rounded-md hover:bg-button-hover transition-colors"
                 >
                   Start review
                 </button>
@@ -124,27 +124,27 @@ export function ReviewsPage() {
 
       {upcoming.length > 0 && (
         <section className="mb-8">
-          <h2 className="text-sm font-semibold text-[#6B7280] mb-3">
+          <h2 className="text-sm font-semibold text-secondary-text mb-3">
             Upcoming ({upcoming.length})
           </h2>
           <div className="space-y-2">
             {upcoming.map((item) => (
-              <div key={item.queueItemId} className="flex items-center justify-between bg-white p-4 rounded-lg border border-[#E5E2DB] opacity-80">
+              <div key={item.queueItemId} className="flex items-center justify-between bg-primary-bg p-4 rounded-lg border border-border opacity-80">
                 <div className="flex items-center gap-4">
                   <div>
-                    <div className="font-mono text-xs text-[#6B7280]">
+                    <div className="font-mono text-xs text-secondary-text">
                       {item.problem.contestId}{item.problem.problemIndex}
                     </div>
-                    <div className="font-medium text-[#242824]">{item.problem.name}</div>
+                    <div className="font-medium text-primary-text">{item.problem.name}</div>
                   </div>
                   <RatingLabel rating={item.problem.rating} />
-                  <span className="text-xs text-[#6B7280]">
+                  <span className="text-xs text-secondary-text">
                     Due {item.nextReviewDate}
                   </span>
                 </div>
                 <Link
                   to={`/queue/${item.queueItemId}`}
-                  className="text-sm text-[#35634E] hover:underline flex items-center gap-1"
+                  className="text-sm text-accent hover:underline flex items-center gap-1"
                 >
                   View <ExternalLink size={12} />
                 </Link>

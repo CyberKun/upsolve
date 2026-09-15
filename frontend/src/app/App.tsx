@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from '../features/auth/AuthProvider';
 import { ProtectedRoute } from '../features/auth/ProtectedRoute';
@@ -10,9 +10,35 @@ import { TodayPage } from '../features/today/TodayPage';
 import { QueuePage } from '../features/queue/QueuePage';
 import { ProblemDetailPage } from '../features/queue/ProblemDetailPage';
 import { ReviewsPage } from '../features/reviews/ReviewsPage';
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 const InsightsPage = lazy(() => import('../features/insights/InsightsPage').then(m => ({ default: m.InsightsPage })));
 import { SettingsPage } from '../features/settings/SettingsPage';
+import { ExplorePage } from '../features/explore/ExplorePage';
+import { AppHeader } from '../shared/ui/AppHeader';
+import { ThemeSwitcher } from '../shared/ui/ThemeSwitcher';
+import { ThemeProvider, useTheme } from '../shared/theme/ThemeProvider';
+import { themes } from '../shared/theme/themes';
+import { useAuth } from '../features/auth/useAuth';
+
+const navigation = [
+  { to: '/explore', label: 'Explore' },
+  { to: '/today', label: 'Today' },
+  { to: '/queue', label: 'Upsolve Queue' },
+  { to: '/reviews', label: 'Reviews' },
+  { to: '/insights', label: 'Insights' },
+];
+
+function Header() {
+  const { theme, setTheme } = useTheme();
+  const { isAuthenticated } = useAuth();
+  return <AppHeader links={navigation} accountLink={isAuthenticated ? { to: '/settings', label: 'Settings' } : { to: '/login', label: 'Sign in' }} themeSwitcher={<ThemeSwitcher value={theme} options={themes} onChange={setTheme} />} />;
+}
+
+function RouteScrollReset() {
+  const { pathname } = useLocation();
+  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  return null;
+}
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -24,10 +50,14 @@ const queryClient = new QueryClient({
 
 export function App() {
   return (
-    <QueryClientProvider client={queryClient}>
+    <ThemeProvider><QueryClientProvider client={queryClient}>
       <BrowserRouter>
+        <RouteScrollReset />
         <AuthProvider>
+          <Header />
+          <main id="main-content" tabIndex={-1} className="min-h-[calc(100dvh-var(--header-height))]">
           <Routes>
+            <Route path="/explore" element={<ExplorePage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
@@ -42,8 +72,9 @@ export function App() {
               <Route path="*" element={<Navigate to="/today" replace />} />
             </Route>
           </Routes>
+          </main>
         </AuthProvider>
       </BrowserRouter>
-    </QueryClientProvider>
+    </QueryClientProvider></ThemeProvider>
   );
 }
